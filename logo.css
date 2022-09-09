@@ -1,0 +1,40 @@
+
+.canvas{
+    position: relative;
+    background-color: rgb(220, 245, 243);
+    padding: 1.5em;
+    margin: 1em;
+}
+
+.gate{
+    height: 100px;
+    width: 100px;
+    border-radius: 0% 50% 50% 0%;
+    background-color: aliceblue;
+    border-color: black;
+    border-style: solid;
+    border-width: 7px;
+    box-shadow: -5px 5px 0 0 grey;
+    transform: translate(30px, 0em);
+}
+
+
+.wires_in{
+    background-color: black;
+    height: 10px;
+    width: 50px;
+    box-shadow: 
+        0px 50px 0 0 black,
+        160px 25px 0 0 black;
+    transform: translate(-20px, -85px);
+}
+
+.TitleHeader{
+    height: 0;
+    width: auto;
+    transform: translate(240px, -100px);
+}
+
+/*
+
+*/
