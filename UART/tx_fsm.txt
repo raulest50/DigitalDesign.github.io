@@ -1,0 +1,124 @@
+library IEEE;
+            use IEEE.STD_LOGIC_1164.ALL;
+
+            entity FSM_TX is
+                Port ( clk : in STD_LOGIC;
+                    rstn : in std_logic;
+                    Bin : in STD_LOGIC_VECTOR (7 downto 0);
+                    dv : in STD_LOGIC; -- data valid, start transfer
+                    r : out STD_LOGIC; -- transfer ready
+                    tx : out STD_LOGIC); -- data bus
+            end FSM_TX;
+
+            architecture Behavioral of FSM_TX is
+
+                type State is (Idle, Start, b0, b1, b2, b3, b4, b5, b6, b7, Finish);
+                signal S : State := Idle;
+                signal Ns: State := Idle;
+                
+                signal count : natural range 0 to 867 := 0;
+                signal timer : natural range 0 to 867 := 0;
+                
+            begin
+
+                state_memory:process(clk, rstn)
+                begin
+                    if rising_edge(clk) then
+                        if rstn='0' then
+                            S <= Idle;
+                            count <= 0;
+                        else
+                            if not(S = Idle) then
+                                count <= count +1;
+                            end if;
+                            if count >= timer then
+                                S <= Ns;
+                                count <= 0;
+                            end if;
+                            if S = Finish and Ns = Idle and count=866 then
+                                r <= '1';
+                            else
+                                r <= '0';
+                            end if;
+                        end if;
+                    end if;
+                end process state_memory;
+                
+                next_state:process(dv, S)
+                begin
+                    case S is 
+                        when Idle =>
+                            if dv ='1' then
+                                Ns <= Start;
+                            else
+                                Ns <= Idle;
+                            end if;
+                            timer <= 0;
+                        when Start =>
+                            Ns <= b0;
+                            timer <= 867-1;
+                        when b0 =>
+                            Ns <= b1;
+                            timer <= 867-1;
+                        when b1 =>
+                            Ns <= b2;
+                            timer <= 867-1;
+                        when b2 =>
+                            Ns <= b3;
+                            timer <= 867-1;
+                        when b3 =>
+                            Ns <= b4;
+                            timer <= 867-1;
+                        when b4 =>
+                            Ns <= b5;
+                            timer <= 867-1;
+                        when b5 =>
+                            Ns <= b6;
+                            timer <= 867-1;
+                        when b6 =>
+                            Ns <= b7;
+                            timer <= 867-1;
+                        when b7 =>
+                            Ns <= Finish;
+                            timer <= 867-1;
+                        when Finish =>
+                            Ns <= Idle;
+                            timer <= 867-1;
+                        when others =>
+                            Ns <= Idle;
+                            timer <= 0;
+                    end case;
+                end process next_state;
+                
+                
+                output_logic:process(S)
+                begin
+                    case S is 
+                        when Idle =>
+                            tx <= '1';
+                        when Start =>
+                            tx <= '0';
+                        when b0 =>
+                            tx <= Bin(0);
+                        when b1 =>
+                            tx <= Bin(1);
+                        when b2 =>
+                            tx <= Bin(2);
+                        when b3 =>
+                            tx <= Bin(3);
+                        when b4 =>
+                            tx <= Bin(4);
+                        when b5 =>
+                            tx <= Bin(5);
+                        when b6 =>
+                            tx <= Bin(6);
+                        when b7 =>
+                            tx <= Bin(7);
+                        when Finish =>
+                            tx <= '1';
+                        when others =>
+                            tx <= '1';
+                    end case;
+                end process output_logic;
+
+            end Behavioral;

@@ -5,8 +5,8 @@
   <title>AXI Lite</title>
 
   <!-- Mi hoja de estilos personal-->
-  <link rel="stylesheet" href="./estilo.css">
-  <link rel="stylesheet" href="./logo.css">
+  <link rel="stylesheet" href="../estilo.css">
+  <link rel="stylesheet" href="../logo.css">
   
   <!-- PureCSS framework como alternativa a bootstrap. -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@2.1.0/build/pure-min.css" integrity="sha384-yHIFVG6ClnONEA5yB5DJXfW2/KC173DIQrYoZMEtBvGzmf0PKiGyNEqe9N6BNDBH" crossorigin="anonymous">
@@ -23,10 +23,90 @@
 </head>
 <body>
     <div>
-        <h1>AXI Lite</h1>
+        <h1>AXI4 Lite</h1>
     </div>
     <div>
-        <p1></p1>
+        <h2>Introduction</h2>
+        <p1>
+            AMBA AXI is a bus communication protocol created by ARM. It is used by many Xilinx IP blocks 
+            and  possibly other businesses. AXI4 Lite is a simplified version of AXI4 since employ less signals.
+            The spirit of the mechanism remains the same, though simpler. In this lecture, only the Lite version 
+            is to be considered.
+        </p1>
+    </div>
+
+    <div>
+        <h2>Channels</h2>
+        <p>
+            The AXI4 communication protocol consis of 5 communication channels, listed above
+        </p>
+        <ul>
+            <ol>Address Write Channel</ol>
+            <ol>Data Write Channel</ol>
+            <ol>Read Response Channel</ol>
+            <ol>Address Read Channel</ol>
+            <ol>Data Read Channel</ol>
+        </ul>
+        <p>
+            All five channels implements a HandShake mechanism. But first, lets explain the purpose of each
+            channel. 
+        </p>
+
+        
+        <h3>Address Write Channel</h3>
+        <p>
+            In this channel the master tells the slave which address wants to write at.
+            An address valid bit is set to high to signal the slave the masters wants to especify
+            an address for a write operation. When slave is ready to read the address, sets 
+            the read ready bit to high. Then this channel consis of an address bus, a data valid
+            and a read ready wires.
+        </p>
+
+        <h3>Data Write Channel</h3>
+        <p>
+            equally important is the data to be written at the specified address. The data bus consist of 
+            32 bits and there is also a data valid bit and read ready bit. The mechanism is the same
+        </p>
+
+        <h3>Write Response Channel</h3>
+        <p>
+            Once the write operation, handled by the two previous channels, is complete, The master would
+            like to know if it was succesfull. This channel two bit bus for the slave to tell the master 
+            if write succeded or an error happened. also has a data valid bit to signal the master that is 
+            ok to read the response status. When the master already read the write response status then has 
+            to set read ready bit to high to tell the slave.
+        </p>
+
+        <h3>Address Read Channel</h3>
+        <p>
+            The same way the master has to specify which address wants to read at. This channel has then an 
+            address bus, a read address valid and read address ready bits.
+        </p>
+
+        <h3>Data Read Channel</h3>
+        <p>
+            The slave drives the data bus and the master is who reads it. In this bus the slave puts the data 
+            stored at the address specified by the master in the read address channel.
+
+        </p>
+
+    </div>
+
+    <div>
+        <h2>HandShake mechanism</h2>
+        <p>
+            
+        </p>
+    </div>
+
+    <div>
+        <h2>Vivadado VHDL Simulations</h2>
+        <p>
+            A very good way to understand how protocol works is with a practical example. Here
+            the AXI4-LITE UART IP block from xilinx is goint to be instantiated in a test bench
+            with VHDL to see how it behaves. It is useful to understand beforehand the UART
+            protocol.
+        </p>
     </div>
     
     <div>
