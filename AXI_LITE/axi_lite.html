@@ -95,18 +95,74 @@
     <div>
         <h2>HandShake mechanism</h2>
         <p>
-            
+            The master is responsible to drive bus data in Address Write, Data Write and Address Read Channels.
+            Hence the master is also responsible of driving the corresponding data valid signals.
+            The valid signal in each channel tells the slave that is permitted to read the bus data.
+            the latter applies to all channels. For Write Response and Data Read channel the responsible to 
+            drive the valid signals is the slave since it is also the slave who sets the data in those
+            channels. The one who reads the data in the bus can tell the other part it has finished to read
+            the data by setting the ready bit to high. The Address Write Ready to name an example.
         </p>
+
+        <p>The enforced rules are:</p>
+
+        <ul>
+            <ol>
+                When a VALID (AxVALID/xVALID) signal is asserted, it must remain asserted until the rising clock edge after the slave asserts AxREADY/xREADY.
+            </ol>
+            <ol>
+                the VALID signal of the AXI interface sending information must not be dependent on the READY 
+                signal of the AXI interface receiving that information
+                However, the state of the READY signal can depend on the VALID signal
+            </ol>
+            <ol>
+                A write response must always follow the last write transfer in the write transaction 
+                of which it is a part
+            </ol>
+            <ol>
+                Read data must always follow the address to which the data relates
+            </ol>
+            <ol>
+                A slave must wait for both ARVALID and ARREADY to be asserted before it asserts RVALID 
+                to indicate that valid data is available
+            </ol>
+        </ul>
+        
     </div>
 
     <div>
         <h2>Vivadado VHDL Simulations</h2>
         <p>
-            A very good way to understand how protocol works is with a practical example. Here
-            the AXI4-LITE UART IP block from xilinx is goint to be instantiated in a test bench
-            with VHDL to see how it behaves. It is useful to understand beforehand the UART
-            protocol.
+            To transmit by UART the byte 0x82, one has to set the address 0x04 in the AXI UART, which 
+            is the Tx FIFO register. The Address 0x04 is set in the Address Write channel and the byte 0x82
+            is set in the Data Write bus as can be apreciated in the image below. When both data valids
+            in address and data write channels is set to 1, the UART slave start to read the data. It is 
+            supposed that communication is atomic and each channel works independently. But in practice
+            transmission only started when both data valids were set to 1. Afterwards the read ready in both
+            channels are set to 1 by the UART slave.
+            <br>
+            check https://www.realdigital.org/doc/a9fee931f7a172423e1ba73f66ca4081#:~:text=Advanced%20eXtensible%20Interface%204%20(AXI4,%2C%20as%20AXI3%2C%20in%201996.
+            <br>
+            and check https://support.xilinx.com/s/article/1053914?language=en_US
+            <br>
+            
         </p>
+
+        <img src="./sim_AXI4_Lite_write.PNG">
+
+        <p>
+            The communication baud rate in this simulation is 115200 and the clock frequency is 100Mhz.
+            Hence the handshake process is more faster than transmission speed so Tx timing diagram 
+            is shown in separate image below.
+        </p>
+
+        <img src="./sim_UART_tx_0x52.PNG">
+
+        <p>
+            To send multiple bytes is very convenient to enable interrupts in the CTRL_REG. After 
+            transmission in Tx pin is finished, the interrupt pin will signal a pulse.
+        </p>
+
     </div>
     
     <div>
